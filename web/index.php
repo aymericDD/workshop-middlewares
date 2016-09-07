@@ -1,9 +1,9 @@
 <?php
 
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\SapiEmitter;
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+use Zend\Diactoros\Response\TextResponse;
+use Zend\Diactoros\ServerRequestFactory;
 
 // Serve static files
 if (php_sapi_name() === 'cli-server' && is_file(__DIR__ . preg_replace('#(\?.*)$#', '', $_SERVER['REQUEST_URI']))) {
@@ -14,19 +14,17 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-$application = function () {
-    // Write your application: return a response
-    /**
-     * @see \Zend\Diactoros\Response\TextResponse
-     * @see \Zend\Diactoros\Response\HtmlResponse
-     * @see \Zend\Diactoros\Response\JsonResponse
-     */
+$application = function (ServerRequestInterface $request, callable $next) {
+    return new TextResponse('Hello world!');
 };
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 // Run the application
-$response = $application();
+$next = function () {
+    return new TextResponse('Page not found', 404);
+};
+$response = $application(ServerRequestFactory::fromGlobals(), $next);
 // Emit the response (with header() and echo)
 (new SapiEmitter)->emit($response);
