@@ -23,3 +23,30 @@ Use the request so that when querying [http://localhost:8000/?name=Bob](http://l
 Use a middleware [`Pipe`](src/Middleware/Pipe.php) to assemble multiple middlewares into a bigger application.
 
 The error handler middleware must run before the next middlewares: it will catch exceptions thrown in next middlewares and show an error page.
+
+## Step 4: split the flow with a router
+
+Use the router to map URLs to handlers (aka controllers).
+
+## Step 5: authentication middleware
+
+Write a middleware that requires a valid HTTP "Basic" authentication to access the website. To do that you can complete the existing [`HttpBasicAuthentication`](src/Middleware/HttpBasicAuthentication.php) class, you can also run the tests (test-driven development) with `composer tests`.
+
+Once that is done, use the middleware in your application to prevent access to the whole website.
+
+## Step 6: nesting middlewares
+
+Add an API to your application (JSON responses):
+
+- `/api/articles` should return the list of articles
+- `/api/time` should return the current `time()`
+
+The API must require authentication (HTTP basic auth), but the website must be publicly accessible (no authentication anymore).
+
+Remember the router or the middleware pipe are like any other middleware: you can nest them and use them several times.
+
+## Step 7: request attributes
+
+Add an API endpoint (`/api/whoami`) that returns the user name.
+
+You can pass the user name from the authentication middleware to the controller using request attributes.
