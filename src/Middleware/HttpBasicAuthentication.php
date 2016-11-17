@@ -5,6 +5,7 @@ namespace Superpress\Middleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Superpress\Middleware;
+use Zend\Diactoros\Response\EmptyResponse;
 
 class HttpBasicAuthentication implements Middleware
 {
@@ -25,10 +26,10 @@ class HttpBasicAuthentication implements Middleware
     {
         $header = $request->getHeaderLine('Authorization');
         if (strpos($header, 'Basic') !== 0) {
-            // No authentication found: 401
-            // Hint: set the 'WWW-Authenticate' to 'Basic realm="Superpress"' to trigger authentication
-            // in web browsers.
-            // TODO
+            // No authentication found: 401 (ask for authentication)
+            return new EmptyResponse(401, [
+                'WWW-Authenticate' => 'Basic realm="Superpress"',
+            ]);
         }
 
         // Decode the username and password from the HTTP header
@@ -38,14 +39,11 @@ class HttpBasicAuthentication implements Middleware
 
         if (isset($this->users[$username]) && ($this->users[$username] === $password)) {
             // Authenticated
-            // TODO
+            // Call the next middleware
+            return $next($request->withAttribute('username', $username));
         }
 
         // Authentication failed: 403
-        // TODO
-
-
-
-        return $next($request);
+        return new EmptyResponse(403);
     }
 }

@@ -10,6 +10,7 @@ use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\Response\TextResponse;
 use Zend\Diactoros\ServerRequestFactory;
+use \Psr\Http\Message\ServerRequestInterface;
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -46,6 +47,9 @@ $application = new Pipe([
                 },
                 '/api/time' => function () {
                     return new JsonResponse(time());
+                },
+                '/api/whoami' => function (ServerRequestInterface $request) {
+                    return new JsonResponse($request->getAttribute('username'));
                 },
             ]),
         ]),
