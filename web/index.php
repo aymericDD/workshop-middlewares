@@ -15,7 +15,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 
 $application = function (ServerRequestInterface $request) {
-    return new TextResponse('Hello world!');
+    $requestParams = $request->getQueryParams();
+    $name = $requestParams['name'] ?? 'world';
+    return new TextResponse('Hello ' . $name);
 };
 
 
