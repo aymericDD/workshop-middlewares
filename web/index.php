@@ -21,6 +21,7 @@ $application = function () {
      * @see \Zend\Diactoros\Response\HtmlResponse
      * @see \Zend\Diactoros\Response\JsonResponse
      */
+    return new \Zend\Diactoros\Response\TextResponse("Hello world");
 };
 
 
