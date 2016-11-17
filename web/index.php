@@ -4,6 +4,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\Response\TextResponse;
 use Zend\Diactoros\ServerRequestFactory;
+use \Superpress\Middleware\Pipe;
 
 // Serve static files
 if (php_sapi_name() === 'cli-server' && is_file(__DIR__ . preg_replace('#(\?.*)$#', '', $_SERVER['REQUEST_URI']))) {
@@ -14,11 +15,14 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-$application = function (ServerRequestInterface $request, callable $next) {
-    $queryParams = $request->getQueryParams();
-    $name = !empty($queryParams['name']) ? $queryParams['name'] : 'world';
-    return new TextResponse('Hello ' . $name . '!');
-};
+$application = new Pipe([
+    new \Superpress\Middleware\ErrorHandler(),
+    function (ServerRequestInterface $request, callable $next) {
+        $queryParams = $request->getQueryParams();
+        $name = !empty($queryParams['name']) ? $queryParams['name'] : 'world';
+        return new TextResponse('Hello ' . $name . '!');
+    },
+]);
 
 
 // ---------------------------------------------------------------------------------------------------------------------
